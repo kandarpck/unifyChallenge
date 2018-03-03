@@ -4,6 +4,7 @@ import requests
 from random import randrange
 from fractions import gcd
 
+
 class RSAKeyGen(object):
     """
     Generate RSA Key pair using random numbers generated from Random.org
@@ -24,6 +25,9 @@ class RSAKeyGen(object):
         self.q = None
         self.N = None
         self.lcm = None
+        self.e= None
+        self.d = None
+
 
     def get_random(self):
         """ Query random.org and generate a list of random numbers """
@@ -37,6 +41,7 @@ class RSAKeyGen(object):
                 self.random_nums.append(int(number, 2))
                 tmp = []
 
+    # Adapted from Rosetta code
     def is_prime(self, guess, no_of_checks=10):
         """Checks whether the guess is prime
             using Miller Rabin Primality test """
@@ -83,9 +88,34 @@ class RSAKeyGen(object):
         self.lcm = self.N // gcd(self.p, self.q)
 
 
+    def find_e(self, lcm):
+        for i in range(3, lcm, 2):
+            if gcd(i, lcm) == 1:
+                return i
+
     def generate_keys(self):
-        self.generate_keys()
+        self.generate_rsa_key_pairs()
         self.totient()
+        self.e = self.find_e(self.lcm)
+        self.d = self.mulinv(self.e, self.lcm)
+
+        self.public = (self.N, self.e)
+        self.private = (self.N, self.d)
+        return self.public, self.private
+
+    # Adapted from Rosetta Code
+    def xgcd(self, b, n):
+        x0, x1, y0, y1 = 1, 0, 0, 1
+        while n != 0:
+            q, b, n = b // n, n, b % n
+            x0, x1 = x1, x0 - q * x1
+            y0, y1 = y1, y0 - q * y1
+        return b, x0, y0
+
+    def mulinv(self, b, n):
+        g, x, _ = self.xgcd(b, n)
+        if g == 1:
+            return x % n
 
 
 if __name__ == "__main__":
