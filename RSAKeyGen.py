@@ -74,7 +74,7 @@ class RSAKeyGen(object):
                 return False
         return True
 
-    def generate_rsa_key_pairs(self):
+    def generate_primes(self):
         p = self.random_nums.pop()
         while not self.is_prime(p) and p.bit_length() < 1024:
             p = self.random_nums.pop()
@@ -97,7 +97,7 @@ class RSAKeyGen(object):
                 return i
 
     def generate_keys(self):
-        self.generate_rsa_key_pairs()
+        self.generate_primes()
         self.totient()
         self.lcm = self.N // gcd(self.p, self.q)
         self.e = self.coprimeTotient(self.lcm)
