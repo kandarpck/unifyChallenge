@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import requests
-from random import randrange
+from random import randrange, randint
 from fractions import gcd
 
 
@@ -25,9 +25,8 @@ class RSAKeyGen(object):
         self.q = None
         self.N = None
         self.lcm = None
-        self.e= None
+        self.e = None
         self.d = None
-
 
     def get_random(self):
         """ Query random.org and generate a list of random numbers """
@@ -82,21 +81,25 @@ class RSAKeyGen(object):
             q = self.random_nums.pop()
         self.p = p
         self.q = q
+        print "p: ", p
+        print "q: ", q
 
     def totient(self):
         self.N = self.p * self.q
-        self.lcm = self.N // gcd(self.p, self.q)
+        print "N: ", self.N
 
-
-    def find_e(self, lcm):
-        for i in range(3, lcm, 2):
+    def coprimeTotient(self, lcm):
+        while True:
+            i = randint(0, lcm)
             if gcd(i, lcm) == 1:
                 return i
 
     def generate_keys(self):
         self.generate_rsa_key_pairs()
         self.totient()
-        self.e = self.find_e(self.lcm)
+        self.lcm = self.N // gcd(self.p, self.q)
+        print "LCM: ", self.lcm
+        self.e = self.coprimeTotient(self.lcm)
         self.d = self.mulinv(self.e, self.lcm)
 
         self.public = (self.N, self.e)
@@ -121,4 +124,6 @@ class RSAKeyGen(object):
 if __name__ == "__main__":
     gen = RSAKeyGen(url='https://www.random.org/integers')
     gen.get_random()
-    gen.generate_keys()
+    public, private = gen.generate_keys()
+    print "Public Key: ", public
+    print "Private Key: ", private
