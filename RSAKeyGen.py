@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+__author__ = "Kandarp Khandwala"
+__email__ = "kandarpck@gmail.com,kandarp.k@jhu.edu"
+
 import requests
 from random import randrange, randint
 from fractions import gcd
