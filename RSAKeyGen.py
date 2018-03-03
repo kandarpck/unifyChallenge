@@ -27,6 +27,8 @@ class RSAKeyGen(object):
         self.lcm = None
         self.e = None
         self.d = None
+        self.public = None
+        self.private = None
 
     def get_random(self):
         """ Query random.org and generate a list of random numbers """
@@ -98,10 +100,10 @@ class RSAKeyGen(object):
         self.generate_rsa_key_pairs()
         self.totient()
         self.lcm = self.N // gcd(self.p, self.q)
-        print "LCM: ", self.lcm
         self.e = self.coprimeTotient(self.lcm)
         self.d = self.mulinv(self.e, self.lcm)
-
+        print "e: ", self.e
+        print "d: ", self.d
         self.public = (self.N, self.e)
         self.private = (self.N, self.d)
         return self.public, self.private
