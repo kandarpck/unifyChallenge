@@ -96,18 +96,6 @@ class RSAKeyGen(object):
             if gcd(i, lcm) == 1:
                 return i
 
-    def generate_keys(self):
-        self.generate_primes()
-        self.totient()
-        self.lcm = self.N // gcd(self.p, self.q)
-        self.e = self.coprimeTotient(self.lcm)
-        self.d = self.mulinv(self.e, self.lcm)
-        print "e: ", self.e
-        print "d: ", self.d
-        self.public = (self.N, self.e)
-        self.private = (self.N, self.d)
-        return self.public, self.private
-
     # Adapted from Rosetta Code
     def xgcd(self, b, n):
         x0, x1, y0, y1 = 1, 0, 0, 1
@@ -122,10 +110,22 @@ class RSAKeyGen(object):
         if g == 1:
             return x % n
 
+    def generate_keys(self):
+        self.get_random()
+        self.generate_primes()
+        self.totient()
+        self.lcm = self.N // gcd(self.p, self.q)
+        self.e = self.coprimeTotient(self.lcm)
+        self.d = self.mulinv(self.e, self.lcm)
+        print "e: ", self.e
+        print "d: ", self.d
+        self.public = (self.N, self.e)
+        self.private = (self.N, self.d)
+        return self.public, self.private
+
 
 if __name__ == "__main__":
     gen = RSAKeyGen(url='https://www.random.org/integers')
-    gen.get_random()
     public, private = gen.generate_keys()
     print "Public Key: ", public
     print "Private Key: ", private
